@@ -2,8 +2,8 @@
   "scripts": {
     "dev": "parcel ./src/index.html",
     "buildClient": "parcel build ./src/index.html --experimental-scope-hoisting",
-    "buildServer": "tsc ./src/server/node.ts --outDir dist",
-    "startServer": "node ./dist/server/node.js",
+    "buildServer": "tsc ./src/serverIndex.ts --outDir dist",
+    "startServer": "node ./dist/serverIndex.js",
     "postinstall": "npm run buildClient && npm run buildServer"
   },
   "engines": {

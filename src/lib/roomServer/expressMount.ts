@@ -1,7 +1,7 @@
 import { Server } from "ws";
 import { Cartridge } from "./types";
 import { ServerSocket } from "../socket/types";
-import { createRoomServer } from "./";
+import { createRoomServer } from ".";
 
 function addHeartbeat(wss: Server, ms = 25000) {
   function noop() {}
@@ -32,7 +32,7 @@ function addHeartbeat(wss: Server, ms = 25000) {
   });
 }
 
-export const createNodeServer =
+export const mountRoomServer =
   (expressServer: Express.Application) =>
   (cartridge: Cartridge<any, any, any>) => {
     const gameServer = createRoomServer(cartridge);

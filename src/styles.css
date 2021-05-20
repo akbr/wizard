@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: burlywood;
+}
+
+:root {
+  --max-width: 500px;
+}
+
+#app {
+  max-width: var(--max-width);
+  box-sizing: border-box;
+  position: relative;
+  background-color: green;
+  height: 100%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  overflow: hidden;
+  padding: 1em;
+}

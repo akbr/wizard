@@ -1,13 +1,14 @@
-import { initConnection } from "./server/initConnection";
+import { chatCartridge } from "./remote";
+import { initManager } from "./lib/socket/roomServer/initManager";
 import { initState } from "./state/initState";
 import { initView } from "./views/initView";
 
-let manager =
+const url =
   location.hostname !== "localhost"
-    ? initConnection(location.origin.replace(/^http/, "ws"))
-    : initConnection("ws://localhost:5000");
+    ? location.origin.replace(/^http/, "ws")
+    : "ws://localhost:5000";
 
-//let [manager, server] = initConnection();
+const [manager] = initManager(chatCartridge, url);
 
 let store = initState(manager);
 let updateView = initView();

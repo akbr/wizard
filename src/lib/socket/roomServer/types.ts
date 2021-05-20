@@ -55,3 +55,6 @@ export type ServerJoin = {
   data: { game: string; playerIndex?: number };
 };
 export type ServerActions = ServerJoin;
+
+export type WithServerStates<T> = T | ServerStates;
+export type WithServerActions<T> = T | ServerActions;

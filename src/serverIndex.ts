@@ -1,7 +1,9 @@
 import * as express from "express";
 import * as path from "path";
+
+import { createRoomServer } from "./lib/roomServer/";
 import { mountRoomServer } from "./lib/roomServer/expressMount";
-import { chatCartridge } from "./server/cartridge";
+import { chatCartridge } from "./remote";
 
 const PORT = process.env.PORT || 5000;
 const distPath = path.resolve("dist/");
@@ -15,4 +17,4 @@ mountRoomServer(
     .listen(PORT, function () {
       return console.log("Listening on " + PORT);
     })
-)(chatCartridge);
+)(createRoomServer(chatCartridge));

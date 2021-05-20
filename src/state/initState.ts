@@ -1,9 +1,9 @@
-import type { Store } from "./types";
-import type { ChatSocketManager } from "../server/initConnection";
+import type { Store, SocketManager } from "./types";
+
 import createStore from "zustand/vanilla";
 import { createHashEmitter, setHash, replaceHash } from "./hash";
 
-export function initState(socket: ChatSocketManager) {
+export function initState(socket: SocketManager) {
   const store = createStore<Store>((set, get) => ({
     state: { type: "title" },
     connection: 0,

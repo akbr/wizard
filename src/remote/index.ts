@@ -1,10 +1,17 @@
-import { Cartridge } from "../lib/roomServer/types";
+import {
+  Cartridge,
+  WithServerStates,
+  WithServerActions,
+} from "../lib/socket/roomServer/types";
 
-export type ChatStates = { type: "messages"; data: string[] };
-export type ChatActions = { type: "post"; data: string };
+export type CartStates = { type: "messages"; data: string[] };
+export type CartActions = { type: "post"; data: string };
 export type BotOptions = { backward: true };
 
-export const chatCartridge: Cartridge<ChatStates, ChatActions, BotOptions> = {
+export type States = WithServerStates<CartStates>;
+export type Actions = WithServerActions<CartActions>;
+
+export const chatCartridge: Cartridge<CartStates, CartActions, BotOptions> = {
   shouldJoin: () => true,
   getInitialState: () => ({ type: "messages", data: [] }),
   isState: () => true,

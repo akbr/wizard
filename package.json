@@ -6,6 +6,9 @@
     "startServer": "node ./dist/server/node.js",
     "postinstall": "npm run buildClient && npm run buildServer"
   },
+  "engines": {
+    "node": "15.x"
+  },
   "devDependencies": {
     "@types/node": "^15.0.3",
     "@types/ws": "^7.4.4",

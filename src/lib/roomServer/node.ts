@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Server, WebSocket } from "ws";
+import { Server } from "ws";
 import { Cartridge } from "./types";
 import { createRoomServer } from "./";
 

@@ -1,8 +1,8 @@
 import * as express from "express";
 import * as path from "path";
 
-import { createRoomServer } from "./lib/roomServer/";
-import { mountRoomServer } from "./lib/roomServer/expressMount";
+import { createRoomServer } from "./lib/socket/roomServer";
+import { mountRoomServer } from "./lib/socket/roomServer/expressMount";
 import { chatCartridge } from "./remote";
 
 const PORT = process.env.PORT || 5000;

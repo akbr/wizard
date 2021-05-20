@@ -1,4 +1,4 @@
-import { Server, ServerSocket } from "../socket/types";
+import { Server, ServerSocket } from "../types";
 import { Cartridge, ServerStates, ServerActions, Msg } from "./types";
 
 export function createRoomServer<

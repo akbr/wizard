@@ -1,5 +1,4 @@
 import type { Store, SocketManager } from "./types";
-
 import createStore from "zustand/vanilla";
 import { createHashEmitter, setHash, replaceHash } from "./hash";
 

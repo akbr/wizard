@@ -1,5 +1,5 @@
 import { Server } from "ws";
-import { ServerSocket, Server as SocketServer } from "../socket/types";
+import { ServerSocket, Server as SocketServer } from "../types";
 
 function addHeartbeat(wss: Server, ms = 25000) {
   function noop() {}

@@ -1,11 +1,15 @@
-import type { Store, SocketManager } from "./types";
+import type { SocketManager } from "../remote";
+import type { Store } from "./types";
+
 import createStore from "zustand/vanilla";
 import { createHashEmitter, setHash, replaceHash } from "./hash";
+import { createScreen } from "../emitters/screen";
 
 export function initState(socket: SocketManager) {
   const store = createStore<Store>((set, get) => ({
     state: { type: "title" },
     connection: 0,
+    screen: { w: 0, h: 0 },
     post: (msg) => {
       socket.send({ type: "post", data: msg });
     },
@@ -40,6 +44,10 @@ export function initState(socket: SocketManager) {
     } else {
       setState({ state: { type: "title" } });
     }
+  });
+
+  createScreen((screen) => {
+    setState({ screen });
   });
 
   return store;

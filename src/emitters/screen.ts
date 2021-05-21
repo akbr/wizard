@@ -1,4 +1,4 @@
-export type State = {
+export type Screen = {
   w: number;
   h: number;
 };
@@ -10,15 +10,14 @@ function parseCSSVar(varName: string) {
   );
 }
 
-const MAX_WIDTH = parseCSSVar("--max-width");
-
-const getDimensions = () => ({
-  w: window.innerWidth < MAX_WIDTH ? window.innerWidth : MAX_WIDTH,
+const getDimensions = (maxWidth: number) => ({
+  w: window.innerWidth < maxWidth ? window.innerWidth : maxWidth,
   h: window.innerHeight,
 });
 
-export default (emit: (x: State) => void) => {
-  emit(getDimensions());
-  window.onresize = () => emit(getDimensions());
+export const createScreen = (emit: (x: Screen) => void) => {
+  let maxWidth = parseCSSVar("--max-width");
+  emit(getDimensions(maxWidth));
+  window.onresize = () => emit(getDimensions(maxWidth));
   return () => (window.onresize = () => undefined);
 };

@@ -1,4 +1,5 @@
 import type { Store } from "../state/types";
+
 import { h, Fragment } from "preact";
 
 import { Title } from "./Title";
@@ -7,7 +8,7 @@ import { RoomPanel } from "./RoomPanel";
 import { ServerErr } from "./ServerErr";
 
 export const App = (props: Store) => {
-  let { state, room, post, exit, join } = props;
+  let { state, room, screen, post, exit, join } = props;
 
   if (state.type === "title") {
     return <Title join={join} />;

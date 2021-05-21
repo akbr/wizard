@@ -1,6 +1,6 @@
 import { Task } from "../task";
 
-export default function createMeter<T>(listener: (state: T) => void) {
+export function createMeter<T>(emit: (state: T) => void) {
   let queue: T[] = [];
   let locked = false;
   let pending: Task<unknown>[] = [];
@@ -10,7 +10,7 @@ export default function createMeter<T>(listener: (state: T) => void) {
     if (pending.length) return;
     if (queue.length) {
       locked = true;
-      listener(queue.shift()!);
+      emit(queue.shift()!);
     }
   }
 
@@ -20,11 +20,8 @@ export default function createMeter<T>(listener: (state: T) => void) {
   }
 
   function release() {
-    // Async is needed for the stream transition scheme
-    setTimeout(() => {
-      locked = false;
-      next();
-    }, 0);
+    locked = false;
+    next();
   }
 
   function waitFor(t: Task<unknown>) {

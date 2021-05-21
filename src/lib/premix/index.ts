@@ -1,5 +1,17 @@
-import { h, ComponentChildren, Fragment } from "preact";
+import {
+  h,
+  render,
+  FunctionComponent,
+  ComponentChildren,
+  Fragment,
+} from "preact";
 import { Ref, useRef, useLayoutEffect } from "preact/hooks";
+
+export function createViewFn<T>(View: FunctionComponent<T>, $el: HTMLElement) {
+  return function update(x: T) {
+    render(h(View, x), $el);
+  };
+}
 
 /**
  * Passes ref of first VNode/Component and supplied props to imperative update function (via useLayoutEffect).

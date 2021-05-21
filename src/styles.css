@@ -1,12 +1,12 @@
+:root {
+  --max-width: 500px;
+}
+
 body {
   margin: 0;
   height: 100%;
   overflow: hidden;
   background-color: burlywood;
-}
-
-:root {
-  --max-width: 500px;
 }
 
 #app {

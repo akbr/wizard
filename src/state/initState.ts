@@ -2,7 +2,7 @@ import type { SocketManager } from "../remote";
 import type { Store } from "./types";
 
 import createStore from "zustand/vanilla";
-import { createHashEmitter, setHash, replaceHash } from "./hash";
+import { createHashEmitter, setHash, replaceHash } from "../emitters/hash";
 import { createScreen } from "../emitters/screen";
 
 export function initState(socket: SocketManager) {
@@ -10,6 +10,9 @@ export function initState(socket: SocketManager) {
     state: { type: "title" },
     connection: 0,
     screen: { w: 0, h: 0 },
+    start: (options) => {
+      socket.send({ type: "start", data: options });
+    },
     post: (msg) => {
       socket.send({ type: "post", data: msg });
     },
@@ -50,5 +53,5 @@ export function initState(socket: SocketManager) {
     setState({ screen });
   });
 
-  return store;
+  return [store] as const;
 }

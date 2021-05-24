@@ -5,8 +5,7 @@ import {
 } from "../lib/socket/roomServer/types";
 import type { SocketManager as ISocketManager } from "../lib/socket/manager";
 
-export type CartStates = { type: "messages"; data: string[] };
-export type CartActions = { type: "post"; data: string };
+import { reducer, CartStates, CartActions } from "./reducer";
 export type BotOptions = { backward: true };
 
 export type States = WithServerStates<CartStates>;
@@ -15,16 +14,9 @@ export type SocketManager = ISocketManager<States, Actions>;
 
 export const chatCartridge: Cartridge<CartStates, CartActions, BotOptions> = {
   shouldJoin: () => true,
-  getInitialState: () => ({ type: "messages", data: [] }),
+  getInitialState: () => ({ type: "gather" }),
   isState: () => true,
   adaptState: (state) => state,
-  reducer: (state, action, playerIndex) => {
-    if (!action || action.type !== "post") return state;
-    let message = `Player ${playerIndex}: ${action.data}!`;
-    return {
-      type: "messages",
-      data: [...state.data, message],
-    };
-  },
+  reducer,
   bot: (send, options) => (state, playerIndex) => {},
 };

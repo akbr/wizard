@@ -11,9 +11,9 @@ export function init() {
       ? location.origin.replace(/^http/, "ws")
       : "ws://localhost:5000";
 
-  const [manager] = initManager(chatCartridge, false);
+  const [manager] = initManager(chatCartridge, url);
 
-  let store = initState(manager);
+  let [store] = initState(manager);
 
   initGoober();
 

@@ -11,9 +11,10 @@ const GatherContainer = styled("div")`
 type GatherProps = {
   playerIndex: number;
   start: ({ backwards }: { backwards: boolean }) => void;
+  exit: () => void;
 };
 
-export const Gather = ({ playerIndex, start }: GatherProps) => {
+export const Gather = ({ playerIndex, start, exit }: GatherProps) => {
   let [backwards, setBackwards] = useState(false);
 
   return (
@@ -31,7 +32,7 @@ export const Gather = ({ playerIndex, start }: GatherProps) => {
         <label for="vehicle1">Reverse messages</label>
         <br />
         <button onClick={() => start({ backwards })}>Open room</button>
-        <button>Exit</button>
+        <button onClick={exit}>Exit</button>
       </GatherContainer>
     </Dialog>
   );

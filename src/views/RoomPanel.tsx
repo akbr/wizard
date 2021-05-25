@@ -14,9 +14,15 @@ type Props = {
   name: string;
   playerIndex: number;
   connections: any[];
+  transition?: "in" | "out" | undefined;
 };
 
-export const RoomPanel = ({ name, connections, playerIndex }: Props) => {
+export const RoomPanel = ({
+  name,
+  connections,
+  playerIndex,
+  transition,
+}: Props) => {
   return (
     <Panel>
       <div>{name}</div>

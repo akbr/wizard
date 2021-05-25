@@ -1,10 +1,13 @@
 import { createMeter } from "../lib/meter";
 import { pairwise } from "../lib/fn";
 
-type Transition<T> = [T, "in" | "out" | undefined];
+export type Transition = "in" | "out" | undefined;
+type TransitionTuple<T> = [T, Transition];
 
-export function withTransition<T>(listener: (arg: Transition<T>) => void) {
-  const { push, release, waitFor } = createMeter<Transition<T>>(listener);
+export function createTransition<T>(
+  listener: (arg: TransitionTuple<T>) => void
+) {
+  const { push, release, waitFor } = createMeter<TransitionTuple<T>>(listener);
 
   const injectTransition = pairwise<T, void>((curr, prev) => {
     if (prev !== undefined) push([prev, "out"]);

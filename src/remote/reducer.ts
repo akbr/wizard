@@ -54,16 +54,21 @@ function onMessages(
   action: PostAction,
   playerIndex: number
 ): MessagesState {
-  let { options } = state.data;
+  let { options, messages } = state.data;
+
   let msgString = action.data;
-  if (options.backwards) msgString = msgString.split("").reverse().join("");
+
+  if (options.backwards) {
+    msgString = msgString.split("").reverse().join("");
+  }
+
   let message = `Player ${playerIndex}: ${msgString}!`;
 
   return {
     type: "messages",
     data: {
-      messages: [...state.data.messages, message],
-      options: state.data.options,
+      messages: [...messages, message],
+      options,
     },
   };
 }

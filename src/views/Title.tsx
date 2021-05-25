@@ -13,6 +13,7 @@ type Props = {
 
 export const Title = ({ join }: Props) => {
   let ref: Ref<HTMLInputElement> = useRef();
+
   return (
     <TitleDiv>
       <h1>Chat app!</h1>

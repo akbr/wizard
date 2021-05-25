@@ -4,12 +4,14 @@ import type { Store } from "./types";
 import createStore from "zustand/vanilla";
 import { createHashEmitter, setHash, replaceHash } from "../emitters/hash";
 import { createScreen } from "../emitters/screen";
+import { createTransition } from "../emitters/withTransition";
 
 export function initState(socket: SocketManager) {
   const store = createStore<Store>((set, get) => ({
     state: { type: "title" },
     connection: 0,
     screen: { w: 0, h: 0 },
+    transition: undefined,
     start: (options) => {
       socket.send({ type: "start", data: options });
     },
@@ -20,7 +22,7 @@ export function initState(socket: SocketManager) {
     exit: () => {
       replaceHash();
       socket.closeSocket();
-      set({ state: { type: "title" } });
+      push({ type: "title" });
     },
   }));
 
@@ -28,30 +30,36 @@ export function initState(socket: SocketManager) {
 
   socket.onStatus = (connection) => setState({ connection });
 
+  let { push, release, waitFor } = createTransition<Store["state"]>(
+    ([state, transition]) => {
+      setState({ state, transition });
+    }
+  );
+
   socket.onData = (res) => {
     if (res.type === "_room") {
       setState({ room: res });
       replaceHash(res.data.id, res.data.playerIndex);
-    } else if (res.type === "_err") {
-      setState({ state: res });
     } else {
-      setState({ state: res });
+      push(res);
     }
   };
-
-  createHashEmitter(({ game, playerIndex }) => {
-    if (game !== undefined) {
-      socket.openSocket();
-      setState({ state: { type: "loading" } });
-      socket.send({ type: "_join", data: { game, playerIndex } });
-    } else {
-      setState({ state: { type: "title" } });
-    }
-  });
 
   createScreen((screen) => {
     setState({ screen });
   });
 
-  return [store] as const;
+  setTimeout(() => {
+    createHashEmitter(({ game, playerIndex }) => {
+      if (game !== undefined) {
+        socket.openSocket();
+        push({ type: "loading" });
+        socket.send({ type: "_join", data: { game, playerIndex } });
+      } else {
+        push({ type: "title" });
+      }
+    });
+  }, 0);
+
+  return [store, release, waitFor] as const;
 }

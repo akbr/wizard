@@ -27,7 +27,7 @@ export interface Cartridge<
   /** A bot function */
   bot?: (
     send: (action: Actions) => void,
-    options?: unknown
+    options: BotOptions
   ) => (result: States, botPlayerIndex: number) => void;
 }
 

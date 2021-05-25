@@ -11,14 +11,17 @@ export function init() {
       ? location.origin.replace(/^http/, "ws")
       : "ws://localhost:5000";
 
-  const [manager] = initManager(chatCartridge, url);
+  const [manager] = initManager(chatCartridge, false);
 
-  let [store] = initState(manager);
+  let [store, release, waitFor] = initState(manager);
 
   initGoober();
 
   let updateView = createViewFn(App, document.getElementById("app")!);
 
-  store.subscribe(updateView);
-  updateView(store.getState());
+  store.subscribe((state) => {
+    let tasks = updateView(state);
+    tasks.forEach(waitFor);
+    release();
+  });
 }

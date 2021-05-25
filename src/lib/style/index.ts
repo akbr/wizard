@@ -12,11 +12,7 @@ function applyStyles(styles: Dict, el: HTMLElement) {
   });
 }
 
-export default function style(
-  el: HTMLElement,
-  styles: Dict,
-  options: Dict | void
-) {
+export function style(el: HTMLElement, styles: Dict, options: Dict | void) {
   return createTask<void>((done) => {
     styles = patchTransform(styles);
 

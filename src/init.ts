@@ -8,8 +8,8 @@ import { App } from "./views/App";
 export function init() {
   const isLocal = location.hostname === "localhost";
   const url = isLocal
-    ? location.origin.replace(/^http/, "ws")
-    : "ws://localhost:5000";
+    ? "ws://localhost:5000"
+    : location.origin.replace(/^http/, "ws");
 
   const [manager] = initManager(chatCartridge, isLocal ? false : url);
 

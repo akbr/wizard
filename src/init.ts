@@ -6,12 +6,12 @@ import { createViewFn } from "./lib/premix";
 import { App } from "./views/App";
 
 export function init() {
-  const url =
-    location.hostname !== "localhost"
-      ? location.origin.replace(/^http/, "ws")
-      : "ws://localhost:5000";
+  const isLocal = location.hostname === "localhost";
+  const url = isLocal
+    ? location.origin.replace(/^http/, "ws")
+    : "ws://localhost:5000";
 
-  const [manager] = initManager(chatCartridge, false);
+  const [manager] = initManager(chatCartridge, isLocal ? false : url);
 
   let [store, release, waitFor] = initState(manager);
 

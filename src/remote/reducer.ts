@@ -1,10 +1,13 @@
+import type { ChatCartridge } from "./";
+
 type GatherState = { type: "gather" };
 export type Options = { backwards: boolean };
+type Message = [number, string];
 type MessagesState = {
   type: "messages";
   data: {
     options: Options;
-    messages: string[];
+    messages: Message[];
   };
 };
 export type CartStates =
@@ -16,11 +19,11 @@ type StartAction = { type: "start"; data: Options };
 type PostAction = { type: "post"; data: string };
 export type CartActions = StartAction | PostAction;
 
-export function reducer(
-  state: CartStates,
-  action?: CartActions,
-  playerIndex?: number
-): CartStates {
+export const reducer: ChatCartridge["reducer"] = (
+  state,
+  action,
+  playerIndex
+): CartStates => {
   if (!action || playerIndex === undefined) return state;
 
   switch (state.type) {
@@ -35,7 +38,7 @@ export function reducer(
   }
 
   return state;
-}
+};
 
 function onGather(state: GatherState, action: StartAction): MessagesState {
   let options = action.data;
@@ -62,7 +65,7 @@ function onMessages(
     msgString = msgString.split("").reverse().join("");
   }
 
-  let message = `Player ${playerIndex}: ${msgString}!`;
+  let message: Message = [playerIndex, msgString];
 
   return {
     type: "messages",

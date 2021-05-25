@@ -1,4 +1,4 @@
-import type { SocketManager } from "../remote";
+import type { ChatSocketManager } from "../remote";
 import type { Store } from "./types";
 
 import createStore from "zustand/vanilla";
@@ -6,12 +6,15 @@ import { createHashEmitter, setHash, replaceHash } from "../emitters/hash";
 import { createScreen } from "../emitters/screen";
 import { createTransition } from "../emitters/withTransition";
 
-export function initState(socket: SocketManager) {
+export function initState(socket: ChatSocketManager) {
   const store = createStore<Store>((set, get) => ({
     state: { type: "title" },
     connection: 0,
     screen: { w: 0, h: 0 },
     transition: undefined,
+    addBot: (options) => {
+      socket.send({ type: "_bot", data: options });
+    },
     start: (options) => {
       socket.send({ type: "start", data: options });
     },

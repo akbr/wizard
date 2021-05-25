@@ -1,4 +1,4 @@
-import { States as RemoteStates } from "../remote";
+import { BotOptions, States as RemoteStates } from "../remote";
 import { Options } from "../remote/reducer";
 import { Screen } from "../emitters/screen";
 import { Transition } from "../emitters/withTransition";
@@ -13,6 +13,7 @@ export type Store = {
   transition: Transition;
   screen: Screen;
   // ---
+  addBot: (options: BotOptions) => void;
   start: (options: Options) => void;
   post: (msg: string) => void;
   join: (game: string, playerIndex?: number) => void;

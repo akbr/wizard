@@ -3,11 +3,16 @@ export type Msg = {
   data?: any;
 };
 
+export type Bot<States> = (
+  result: States,
+  botPlayerIndex: number | undefined
+) => void;
+
 /** A collection respresenting the logic of a particular game type. */
 export interface Cartridge<
   States extends Msg,
   Actions extends Msg,
-  BotOptions = {}
+  BotOptions extends {}
 > {
   /** Whether a new socket should be allowed to join as a player. (Does not include rejoins.) */
   shouldJoin: (state: States, numPlayers: number) => boolean;
@@ -25,10 +30,11 @@ export interface Cartridge<
   /** How to adapt the state on a per-player basis (e.g., to hide information.) */
   adaptState: (state: States, playerIndex: number) => States;
   /** A bot function */
-  bot?: (
-    send: (action: Actions) => void,
+  createBot?: (
+    send: (action: WithServerActions<Actions, BotOptions>) => void,
+    close: () => void,
     options: BotOptions
-  ) => (result: States, botPlayerIndex: number) => void;
+  ) => Bot<WithServerStates<States>>;
 }
 
 // States
@@ -54,7 +60,14 @@ export type ServerJoin = {
   type: "_join";
   data: { game: string; playerIndex?: number };
 };
+export type ServerBotAction<BotOptions> = {
+  type: "_bot";
+  data: BotOptions;
+};
 export type ServerActions = ServerJoin;
 
-export type WithServerStates<T> = T | ServerStates;
-export type WithServerActions<T> = T | ServerActions;
+export type WithServerStates<CartStates> = CartStates | ServerStates;
+export type WithServerActions<CartActions, BotOptions> =
+  | CartActions
+  | ServerActions
+  | ServerBotAction<BotOptions>;

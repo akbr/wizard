@@ -2,7 +2,7 @@ import { h } from "preact";
 import { useRef, Ref } from "preact/hooks";
 
 type Props = {
-  messages: string[];
+  messages: [number, string][];
   post: (msg: string) => void;
   exit: () => void;
 };
@@ -12,8 +12,10 @@ export const Messages = ({ messages, post, exit }: Props) => {
   return (
     <div>
       <h3>You're in a room!</h3>
-      {messages.map((msg) => (
-        <div>{msg}</div>
+      {messages.map(([player, msg]) => (
+        <div>
+          Player {player}: {msg}
+        </div>
       ))}
       <input ref={ref} />
       <button onClick={() => post(ref.current.value)}>Send</button>

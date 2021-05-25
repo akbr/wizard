@@ -10,11 +10,12 @@ const GatherContainer = styled("div")`
 
 type GatherProps = {
   playerIndex: number;
+  addBot: (options: any) => void;
   start: ({ backwards }: { backwards: boolean }) => void;
   exit: () => void;
 };
 
-export const Gather = ({ playerIndex, start, exit }: GatherProps) => {
+export const Gather = ({ playerIndex, start, exit, addBot }: GatherProps) => {
   let [backwards, setBackwards] = useState(false);
 
   return (
@@ -23,15 +24,16 @@ export const Gather = ({ playerIndex, start, exit }: GatherProps) => {
         <div>You await as playerIndex {playerIndex}</div>
         <input
           type="checkbox"
-          name="vehicle1"
+          name="backward"
           onChange={(e) => {
             //@ts-ignore
             setBackwards(e.target.checked);
           }}
         />
-        <label for="vehicle1">Reverse messages</label>
+        <label for="backward">Reverse messages</label>
         <br />
         <button onClick={() => start({ backwards })}>Open room</button>
+        <button onClick={() => addBot({ trigger: "hi" })}>Add bot</button>
         <button onClick={exit}>Exit</button>
       </GatherContainer>
     </Dialog>

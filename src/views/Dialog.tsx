@@ -3,7 +3,7 @@ import { styled } from "goober";
 
 const DialogOuter = styled("div")`
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
 `;
 

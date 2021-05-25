@@ -12,7 +12,8 @@ import { ServerErr } from "./ServerErr";
 import { Gather } from "./Gather";
 
 export const App = (props: Store) => {
-  let { state, room, screen, start, post, exit, join, transition } = props;
+  let { state, room, screen, start, addBot, post, exit, join, transition } =
+    props;
 
   if (state.type === "title") {
     return (
@@ -30,7 +31,12 @@ export const App = (props: Store) => {
 
   let InteriorView =
     state.type === "gather" ? (
-      <Gather playerIndex={playerIndex} start={start} exit={exit} />
+      <Gather
+        playerIndex={playerIndex}
+        start={start}
+        addBot={addBot}
+        exit={exit}
+      />
     ) : state.type === "messages" ? (
       <Messages messages={state.data.messages} post={post} exit={exit} />
     ) : state.type === "loading" ? (

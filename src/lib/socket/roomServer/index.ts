@@ -1,15 +1,29 @@
-import { Server, ServerSocket } from "../types";
-import { Cartridge, ServerStates, ServerActions, Msg } from "./types";
+import type { Server, ServerSocket } from "../types";
+import type {
+  Cartridge,
+  WithServerStates,
+  WithServerActions,
+  Msg,
+  Bot,
+} from "./types";
+
+import { createLocalSocketPair, async } from "../localSocketPair";
 
 export function createRoomServer<
   CartStates extends Msg,
-  CartActions extends Msg
+  CartActions extends Msg,
+  BotOptions extends {}
 >(
-  cart: Cartridge<CartStates, CartActions>
-): Server<CartStates | ServerStates, CartActions | ServerActions> {
+  cart: Cartridge<CartStates, CartActions, BotOptions>
+): Server<
+  WithServerStates<CartStates>,
+  WithServerActions<CartActions, BotOptions>
+> {
   // Types
-  type AllStates = CartStates | ServerStates;
-  type AllActions = CartActions | ServerActions;
+  type AllStates = WithServerStates<CartStates>;
+  type AllActions = WithServerActions<CartActions, BotOptions>;
+  type ServerActions = Exclude<AllActions, CartActions>;
+
   type Socket = ServerSocket<AllStates>;
   type Room = {
     id: string;
@@ -19,10 +33,18 @@ export function createRoomServer<
   };
 
   // Cartridge methods
-  const { shouldJoin, getInitialState, reducer, isState, adaptState } = cart;
+  const {
+    shouldJoin,
+    getInitialState,
+    reducer,
+    isState,
+    adaptState,
+    createBot,
+  } = cart;
 
   // Internal server state
-  const socketMap: WeakMap<Socket, string | undefined> = new WeakMap();
+  const socketRoomMap: Map<Socket, string | undefined> = new Map();
+  const socketBotMap: Map<Socket, Bot<CartStates>> = new Map();
   const rooms: Map<string, Room> = new Map();
 
   // "Methods"
@@ -38,7 +60,7 @@ export function createRoomServer<
   }
 
   function getSocketRoom(socket: Socket) {
-    let roomId = socketMap.get(socket);
+    let roomId = socketRoomMap.get(socket);
     if (roomId) return rooms.get(roomId);
   }
 
@@ -64,7 +86,7 @@ export function createRoomServer<
     } else {
       room.sockets[index] = socket;
     }
-    socketMap.set(socket, room.id);
+    socketRoomMap.set(socket, room.id);
     broadcastRoomUpdate(room);
     socket.send(adaptState(room.state, room.sockets.indexOf(socket)));
   }
@@ -96,9 +118,16 @@ export function createRoomServer<
     let room = getSocketRoom(socket);
     if (room) {
       room.sockets = room.sockets.map((x) => (x === socket ? false : x));
-      socketMap.delete(socket);
-      let roomIsEmpty = room.sockets.filter((x) => x).length === 0;
+      socketRoomMap.delete(socket);
+      let roomIsEmpty =
+        room.sockets.filter((x) => x && !socketBotMap.get(x)).length === 0;
       if (roomIsEmpty) {
+        room.sockets.forEach((socket) => {
+          if (socket) {
+            socketBotMap.delete(socket);
+            socketRoomMap.delete(socket);
+          }
+        });
         rooms.delete(room.id);
       }
       broadcastRoomUpdate(room);
@@ -138,19 +167,50 @@ export function createRoomServer<
     });
   }
 
+  function addBot(socket: Socket, botOptions: BotOptions) {
+    if (!createBot) {
+      return sendErr(
+        socket,
+        "This cartridge does not have a bot configuration."
+      );
+    }
+
+    let roomId = socketRoomMap.get(socket);
+    if (!roomId)
+      return sendErr(socket, "You must be in a room to summon a bot.");
+
+    let [clientSocket, serverSocket] = createLocalSocketPair(api);
+    let send = (action: AllActions) => async(() => clientSocket.send(action));
+    let bot = createBot(send, clientSocket.close, botOptions);
+    socketBotMap.set(serverSocket, bot);
+    clientSocket.onmessage = (state) => {
+      let room = getSocketRoom(serverSocket);
+      let playerIndex = room ? room.sockets.indexOf(serverSocket) : undefined;
+      bot(state, playerIndex);
+    };
+    send({ type: "_join", data: { game: roomId } });
+  }
+
   function onServerAction(socket: Socket, action: ServerActions) {
-    if (typeof action.data.game !== "string") {
-      return sendErr(socket, "Must specify a room id to data.");
+    if (action.type === "_join") {
+      let { game, playerIndex } = action.data;
+      if (typeof game !== "string") {
+        return sendErr(socket, "Must specify a room id to data.");
+      }
+      if (
+        typeof playerIndex !== "number" &&
+        typeof playerIndex !== "undefined"
+      ) {
+        return sendErr(socket, "Invalid player number.");
+      }
+      leaveRoom(socket);
+      let err = joinRoom(socket, game, playerIndex);
+      if (err) sendErr(socket, err);
     }
-    if (
-      typeof action.data.playerIndex !== "number" &&
-      typeof action.data.playerIndex !== "undefined"
-    ) {
-      return sendErr(socket, "Invalid player number.");
+
+    if (action.type === "_bot") {
+      addBot(socket, action.data);
     }
-    leaveRoom(socket);
-    let err = joinRoom(socket, action.data.game, action.data.playerIndex);
-    if (err) sendErr(socket, err);
   }
 
   function onAppAction(socket: Socket, action: CartActions) {
@@ -163,7 +223,7 @@ export function createRoomServer<
   const isServerAction = (x: AllActions): x is ServerActions =>
     x.type[0] === "_";
 
-  return {
+  const api = {
     onOpen: (socket: Socket) => {},
     onClose: (socket: Socket) => {
       leaveRoom(socket);
@@ -171,7 +231,9 @@ export function createRoomServer<
     onAction: (socket: Socket, action: AllActions) => {
       return isServerAction(action)
         ? onServerAction(socket, action)
-        : onAppAction(socket, action);
+        : onAppAction(socket, action as CartActions);
     },
   };
+
+  return api;
 }

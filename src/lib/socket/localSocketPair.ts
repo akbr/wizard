@@ -1,5 +1,8 @@
 import type { ClientSocket, ServerSocket, Server } from "./types";
-import { async } from "./utils";
+
+export function async(fn: Function) {
+  setTimeout(fn, 0);
+}
 
 export function createLocalSocketPair<States, Actions>(
   server: Server<States, Actions>

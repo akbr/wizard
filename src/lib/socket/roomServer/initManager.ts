@@ -7,12 +7,16 @@ import type {
 import { createRoomServer } from ".";
 import { createSocketManager } from "../manager";
 
-export function initManager<CartStates extends Msg, CartActions extends Msg>(
-  cartridge: Cartridge<CartStates, CartActions, any>,
+export function initManager<
+  CartStates extends Msg,
+  CartActions extends Msg,
+  BotOptions
+>(
+  cartridge: Cartridge<CartStates, CartActions, BotOptions>,
   url: string | false
 ) {
   type States = WithServerStates<CartStates>;
-  type Actions = WithServerActions<CartActions>;
+  type Actions = WithServerActions<CartActions, BotOptions>;
 
   let server = url ? url : createRoomServer(cartridge);
   let socketManager = createSocketManager<States, Actions>(server);

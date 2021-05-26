@@ -80,11 +80,18 @@ export function createRoomServer<
     });
   }
 
-  function onJoinRoom(socket: Socket, room: Room, index?: number) {
-    if (index === undefined) {
-      room.sockets.push(socket);
+  function onJoinRoom(
+    socket: Socket,
+    room: Room,
+    requestedPlayerIndex?: number
+  ) {
+    if (requestedPlayerIndex === undefined) {
+      let firstOpenSeat = room.sockets.indexOf(false);
+      firstOpenSeat > -1
+        ? (room.sockets[firstOpenSeat] = socket)
+        : room.sockets.push(socket);
     } else {
-      room.sockets[index] = socket;
+      room.sockets[requestedPlayerIndex] = socket;
     }
     socketRoomMap.set(socket, room.id);
     broadcastRoomUpdate(room);
@@ -97,9 +104,10 @@ export function createRoomServer<
     let numSeats = sockets.length;
 
     if (requestedPlayerIndex === undefined) {
-      return shouldJoin(state, numSeats)
+      let openSeats = room.sockets.indexOf(false) > 1;
+      return openSeats || shouldJoin(state, numSeats)
         ? onJoinRoom(socket, room)
-        : `Could not join game ${id}.`;
+        : `Could not join game ${id}: Seats are full.`;
     }
 
     if (requestedPlayerIndex !== undefined) {

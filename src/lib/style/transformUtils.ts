@@ -5,6 +5,10 @@ type BasicTransforms = {
   scale?: number | string;
 };
 
+function convertUnit(value: number | string) {
+  return typeof value === "number" ? `${value}px` : value;
+}
+
 export function getBasicTransformString({
   x,
   y,
@@ -13,13 +17,10 @@ export function getBasicTransformString({
 }: BasicTransforms) {
   let strs: string[] = [];
   if (x !== undefined) {
-    if (y !== undefined) {
-      strs.push(`translate(${x}px, ${y}px)`);
-    } else {
-      strs.push(`translateX(${x}px)`);
-    }
-  } else if (y !== undefined) {
-    strs.push(`translateY(${y}px)`);
+    strs.push(`translateX(${convertUnit(x)})`);
+  }
+  if (y !== undefined) {
+    strs.push(`translateY(${convertUnit(y)})`);
   }
   if (rotate !== undefined) {
     strs.push(`rotate(${rotate}deg)`);

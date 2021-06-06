@@ -12,9 +12,24 @@ function applyStyles(styles: Dict, el: HTMLElement) {
   });
 }
 
+function areIdentical(targetStyles: Dict, $el: HTMLElement) {
+  let identical = true;
+  Object.entries(targetStyles).forEach(([key, value]) => {
+    if (!identical) return;
+    //@ts-ignore
+    if ($el.style[key] !== value) identical = false;
+  });
+  return identical;
+}
+
 export function style(el: HTMLElement, styles: Dict, options: Dict | void) {
   return createTask<void>((done) => {
     styles = patchTransform(styles);
+
+    if (areIdentical(styles, el)) {
+      done();
+      return () => undefined;
+    }
 
     const finish = () => {
       applyStyles(styles, el);

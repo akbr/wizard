@@ -11,9 +11,9 @@ import { Task } from "../task";
 let tasks: Task<unknown>[] = [];
 
 export function createViewFn<T>(View: FunctionComponent<T>, $el: HTMLElement) {
-  return function update(x: T) {
+  return function update(x?: T) {
     tasks = [];
-    render(h(View, x), $el);
+    render(h(View, x || null), $el);
     return tasks;
   };
 }

@@ -26,7 +26,7 @@ export function getHandPositions(hand: string[], screen: Screen) {
     };
     let numInRow = isFirstRow ? maxInRow - shortBy : maxInRow;
 
-    let adj = tW - (X_PEEK * (numInRow - 1) + CARD_W);
+    let adj = tW - (X_PEEK * (numInRow - 2) + CARD_W);
     if (adj > 0) pos.x += adj / 2;
     pos.y += screen.h - numRows * Y_PEEK;
     return pos;

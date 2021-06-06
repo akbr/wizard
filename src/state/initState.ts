@@ -12,14 +12,14 @@ export function initState(socket: ChatSocketManager) {
     connection: 0,
     screen: { w: 0, h: 0 },
     transition: undefined,
-    addBot: (options) => {
-      socket.send({ type: "_bot", data: options });
+    addBot: (data) => {
+      socket.send({ type: "_bot", data });
     },
-    start: (options) => {
-      socket.send({ type: "start", data: options });
+    start: (data) => {
+      socket.send({ type: "start", data });
     },
-    post: (msg) => {
-      socket.send({ type: "post", data: msg });
+    post: (data) => {
+      socket.send({ type: "post", data });
     },
     join: (game, playerIndex) => setHash(game, playerIndex),
     exit: () => {

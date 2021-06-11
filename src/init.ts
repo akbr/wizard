@@ -1,27 +1,11 @@
-import { chatCartridge } from "./remote";
-import { initManager } from "./lib/socket/roomServer/initManager";
-import { initState } from "./state/initState";
 import { initGoober } from "./initGoober";
 import { createViewFn } from "./lib/premix";
-import { App } from "./views/App";
 
-export function init() {
-  const isLocal = location.hostname === "localhost";
-  const url = isLocal
-    ? "ws://localhost:5000"
-    : location.origin.replace(/^http/, "ws");
+import { wizardGame } from "./wizard";
+import { createServer } from "./lib/remote/server";
+import { createSocketManager } from "./lib/remote/server/socketManager";
 
-  const [manager] = initManager(chatCartridge, isLocal ? false : url);
+initGoober();
 
-  let [store, release, waitFor] = initState(manager);
-
-  initGoober();
-
-  let updateView = createViewFn(App, document.getElementById("app")!);
-
-  store.subscribe((state) => {
-    let tasks = updateView(state);
-    tasks.forEach(waitFor);
-    release();
-  });
-}
+let server = createServer(wizardGame);
+let socket1 = createSocketManager(server);

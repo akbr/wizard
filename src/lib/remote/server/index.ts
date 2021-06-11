@@ -28,7 +28,7 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
       id,
       sockets: [],
       state: false,
-      names: []
+      names: [],
     };
     rooms.set(id, room);
     return room;
@@ -49,8 +49,8 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
             id,
             playerIndex,
             names,
-            connections
-          }
+            connections,
+          },
         });
     });
   }
@@ -76,7 +76,7 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
     if (room.state) {
       socket.send({
         type: "game",
-        data: adapt(room.state, room.sockets.indexOf(socket))
+        data: adapt(room.state, room.sockets.indexOf(socket)),
       });
     }
   }
@@ -157,6 +157,7 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
     }
 
     if (typeof nextState === "string") {
+      console.log("reducer error");
       if (socket) socket.send({ type: "gameError", data: nextState });
       return;
     }
@@ -172,7 +173,7 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
   function sendErr(socket: ServerSocket, msg: string) {
     socket.send({
       type: "serverError",
-      data: msg
+      data: msg,
     });
   }
 
@@ -193,13 +194,13 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
 
     botSocket = {
       send: (action) => api.onAction(serverSocket, action),
-      close: () => api.onClose(serverSocket)
+      close: () => api.onClose(serverSocket),
     };
 
     let bot = createBot(
       {
         send: (action) => botSocket.send({ type: "submit", data: action }),
-        close: botSocket.close
+        close: botSocket.close,
       },
       botOptions
     );
@@ -211,13 +212,13 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
         let playerIndex = room ? room.sockets.indexOf(serverSocket) : undefined;
         bot(state.data, playerIndex);
       },
-      close: () => api.onClose(serverSocket)
+      close: () => api.onClose(serverSocket),
     };
 
     socketBots.set(serverSocket, bot);
     api.onAction(serverSocket, {
       type: "join",
-      data: { id: socketRooms.get(socket)! }
+      data: { id: socketRooms.get(socket)! },
     });
   }
 
@@ -265,7 +266,7 @@ export function createServer<GameStates, GameActions, Options, BotOptions>(
       if (action.type === "submit") {
         updateRoomState(room, socket, action.data);
       }
-    }
+    },
   };
 
   return api;

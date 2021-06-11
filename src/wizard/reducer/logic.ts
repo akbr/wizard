@@ -5,7 +5,7 @@ import {
   getWizardDeck,
   getStandardDeck,
   shuffle,
-  sortDeck
+  sortDeck,
 } from "./cardUtils";
 
 export const getDealtCards = (numPlayers: number, numCards: number) => {
@@ -17,7 +17,7 @@ export const getDealtCards = (numPlayers: number, numCards: number) => {
       let hand = [];
       let i = 0;
       while (i < numCards) {
-        hand.push(deck.pop());
+        hand.push(deck.pop() as string);
         i++;
       }
       return hand;
@@ -32,7 +32,7 @@ export const getDealtCards = (numPlayers: number, numCards: number) => {
   return {
     hands,
     trumpCard,
-    trumpSuit
+    trumpSuit,
   };
 };
 

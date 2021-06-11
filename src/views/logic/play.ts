@@ -1,11 +1,10 @@
-import type { TableDimensions } from "./measures";
-import { slideIndex } from "../lib/array";
-import { style } from "../lib/style";
+import { slideIndex } from "../../lib/array";
+import { style } from "../../lib/style";
 import { cardFactory } from "./cardFactory";
 import { getPlayedPoisition, getHeldPosition } from "./vectors";
 
 type Props = {
-  tableDimensions: TableDimensions;
+  tableDimensions: { w: number; h: number };
   playerIndex: number;
   numPlayers: number;
   startPlayer: number;

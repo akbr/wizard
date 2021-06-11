@@ -1,5 +1,5 @@
-import { TableDimensions, CARD_W, CARD_H } from "./measures";
-import { Vector, add, multiply, invert } from "../lib/vector";
+import { CARD_W, CARD_H } from "./dimensions";
+import { Vector, add, multiply, invert } from "../../lib/vector";
 
 // Data
 const tC = [0.5, 0];
@@ -47,17 +47,16 @@ const getCenterCardOffset = () => ({
 type VectorCreator = (
   numPlayers: number,
   playerIndex: number,
-  tableDimensions: TableDimensions
+  tableDimensions: { w: number; h: number }
 ) => Vector;
 
 export const getSeatPosition: VectorCreator = (
   numPlayers,
   playerIndex,
-  { tW, tH }
+  { w, h }
 ) => {
   let ratio = getRatio(numPlayers, playerIndex);
-  let tableDimensions = { x: tW, y: tH };
-  return multiply(ratio, tableDimensions);
+  return multiply(ratio, { x: w, y: h });
 };
 
 export const getPlayedPoisition: VectorCreator = (
@@ -65,12 +64,12 @@ export const getPlayedPoisition: VectorCreator = (
   playerIndex,
   tableDimensions
 ) => {
-  let { tW, tH } = tableDimensions;
+  let { w, h } = tableDimensions;
   let minYRatio = 0.33;
 
   let seat = getSeatPosition(numPlayers, playerIndex, tableDimensions);
   let direction = getSeatDirection(numPlayers, playerIndex);
-  let playOffset = multiply(direction, { x: tW / 2, y: tH * minYRatio });
+  let playOffset = multiply(direction, { x: w / 2, y: h * minYRatio });
   let padding = multiply(invert(direction), { x: CARD_W + 12, y: CARD_H / 2 });
   let cardCenter = getCenterCardOffset();
 

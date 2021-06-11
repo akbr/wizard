@@ -13,7 +13,7 @@ import type {
   SelectTrumpAction,
   BidAction,
   PlayAction,
-  ValidateShape
+  ValidateShape,
 } from "./types";
 
 import { getDealtCards, getWinningIndex } from "./logic";
@@ -24,7 +24,7 @@ export const createStart = (numPlayers: number, options: Options): Start => ({
   options,
   scoreHistory: [],
   turn: 0,
-  dealer: -1
+  dealer: -1,
 });
 
 export const createDeal = (s: EndTrick | Start): Deal => ({
@@ -33,7 +33,7 @@ export const createDeal = (s: EndTrick | Start): Deal => ({
   options: s.options,
   scoreHistory: s.scoreHistory,
   turn: s.turn + 1,
-  dealer: s.dealer + 1
+  dealer: s.dealer + 1,
 });
 
 export const onDeal = (s: Deal): SelectTrump | Bid => {
@@ -50,7 +50,7 @@ export const onDeal = (s: Deal): SelectTrump | Bid => {
       | false
     )[],
     actuals: Array.from({ length: s.numPlayers }, () => 0),
-    activePlayer: wizardTrump ? s.dealer : slideIndex(s.numPlayers, s.dealer)
+    activePlayer: wizardTrump ? s.dealer : slideIndex(s.numPlayers, s.dealer),
   };
 };
 
@@ -61,7 +61,7 @@ export const onSelectTrump = (
   ...s,
   phase: "bid",
   trumpSuit: suit,
-  activePlayer: slideIndex(s.numPlayers, s.dealer)
+  activePlayer: slideIndex(s.numPlayers, s.dealer),
 });
 
 export const onBid = (s: Bid, bid: BidAction["data"]) => {
@@ -78,7 +78,7 @@ export const onBid = (s: Bid, bid: BidAction["data"]) => {
         ...s,
         phase: "bid",
         bids,
-        activePlayer: slideIndex(s.numPlayers, s.activePlayer)
+        activePlayer: slideIndex(s.numPlayers, s.activePlayer),
       }
     : <Play>{
         ...s,
@@ -86,7 +86,7 @@ export const onBid = (s: Bid, bid: BidAction["data"]) => {
         bids,
         activePlayer: slideIndex(s.numPlayers, s.dealer),
         trick: [],
-        trickLeader: slideIndex(s.numPlayers, s.dealer)
+        trickLeader: slideIndex(s.numPlayers, s.dealer),
       };
 };
 
@@ -112,7 +112,7 @@ export const onPlay = (
       ...s,
       hands,
       trick,
-      activePlayer: slideIndex(s.numPlayers, s.activePlayer)
+      activePlayer: slideIndex(s.numPlayers, s.activePlayer),
     };
   }
 
@@ -125,7 +125,7 @@ export const onPlay = (
     phase: "endTrick",
     hands,
     trick,
-    trickWinner
+    trickWinner,
   } as const;
   let endTrick: ValidateShape<typeof result, EndTrick> = result;
   return endTrick;
@@ -146,10 +146,10 @@ export const onEndTrick = (s: EndTrick): Deal | End => {
         phase: "end",
         options: s.options,
         numPlayers: s.numPlayers,
-        scoreHistory
+        scoreHistory,
       }
     : createDeal({
         ...s,
-        scoreHistory
+        scoreHistory,
       });
 };

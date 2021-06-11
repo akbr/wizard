@@ -1,16 +1,6 @@
-//import { init } from "./init";
-//init();
+import { createViewFn } from "./lib/premix";
+import { Hand } from "./views/Hand";
 
-import { wizardGame } from "./wizard";
-import { createServer } from "./lib/remote/server";
-import { createSocketManager } from "./lib/remote/server/socketManager";
+let update = createViewFn(Hand, document.getElementById("app")!);
 
-let server = createServer(wizardGame);
-
-let socket1 = createSocketManager(server);
-
-socket1.onData = console.log;
-
-socket1.openSocket();
-socket1.send({ type: "join", data: { id: "test" } });
-socket1.send({ type: "start", data: { canadian: false } });
+update({ hand: ["2|c", "3|c"] });

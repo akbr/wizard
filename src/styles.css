@@ -2,6 +2,7 @@
   --max-width: 600px;
 }
 
+html,
 body {
   margin: 0;
   height: 100%;
